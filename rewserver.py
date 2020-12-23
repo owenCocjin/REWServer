@@ -6,7 +6,9 @@
 ## Notes:
 import serverdriver
 from progmenu import menu
+from menuentries import *
 from constants import *
+PARSE=menu.parse(True, strict=True)
 
 #------------#
 #    MAIN    #
