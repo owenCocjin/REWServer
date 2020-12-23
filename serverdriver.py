@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 ## Author:  Owen Cocjin
-## Version: 0.1
-## Date:    2020.12.18
+## Version: 0.2
+## Date:    2020.12.22
 ## Description:  Manage the web server's socket connections
 ## Notes:
 
