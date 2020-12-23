@@ -8,7 +8,7 @@
 import socket
 from constants import *
 from progmenu import menu
-vprint=menu.verboseSetup(menu.findFlag(['v', "verbose"]), prefix=f"[|X:{__name__}]:")
+vprint=menu.verboseSetup(['v', "verbose"], prefix=f"[|X:{__name__}]:")
 
 #---------------#
 #    SOCKETS    #
