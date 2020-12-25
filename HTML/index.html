@@ -3,29 +3,37 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="index.css">
+	<link rel="stylesheet" href="/CSS/index.css">
 	<title>REWServer</title>
+	<script src="/JS/index.js"></script>
 </head>
 <body>
 	<h1 id="title" class="no-space">REW Server</h1>
 	<div class="frame-container">
 		<div class="column no-space">
 			<h2 class="no-space">GDB</h2>
-			<div class="viewer"></div>
+			<div class="viewer" id="viewer_one">
+				<span style="flex-grow:1;"></span>
+				<div id="tool_one" class="view_wrapper"></div>
+			</div>
 			<div class="inputting">
 				<input type="text" placeholder="Command:" style="flex-grow:3;padding-left:5px;"></input>
-				<button style="flex-grow:0;">Enter</button>
+				<button onclick="getExampleData('one')" style="flex-grow:0;">Enter</button>
 			</div>
 		</div>
 		<div class="column no-space">
 			<h2 class="no-space">Radare</h2>
-			<div class="viewer"></div>
+			<div class="viewer" id="viewer_two">
+				<span style="flex-grow:1;"></span>
+				<div id="tool_two" class="view_wrapper"></div>
+			</div>
 			<div class="inputting">
 				<input type="text" placeholder="Command:" style="flex-grow:3;padding-left:5px;"></input>
-				<button style="flex-grow:0;">Enter</button>
+				<button onclick="getExampleData('two')" style="flex-grow:0;">Enter</button>
 			</div>
 		</div>
 	</div>
+
 	<hr style="margin:10px 0;height:5px;border:none;background-color:#55ee33;"/>
 	<!-- Quick codes, like shortcuts -->
 	<h2 class="no-space" style="margin-bottom:5px;"><u>Quick Codes:</u></h2>
@@ -52,4 +60,6 @@
 		</div>
 	</div>
 </body>
+<footer>
+</footer>
 </html>
