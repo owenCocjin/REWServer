@@ -7,7 +7,8 @@
 import serverdriver
 from progmenu import menu
 from menuentries import *
-from constants import *
+from constants import GLOBE
+from miscus.stringmisc import ctxt
 PARSE=menu.parse(True, strict=True)
 
 #------------#
@@ -15,11 +16,10 @@ PARSE=menu.parse(True, strict=True)
 #------------#
 def main():
 	print("<|X> Setting up socket...")
-	serv_sock=serverdriver.socksetup(ADDR, PORT)
-	print("<|X> Starting server...")
+	serv_sock=serverdriver.socksetup(GLOBE["ADDR"], GLOBE["PORT"])
+	print(ctxt("<|X> Starting server...", bg=42))
 	while True:
 		serverdriver.sockprocess(serv_sock)
-		print()
 
 
 if __name__=="__main__":
