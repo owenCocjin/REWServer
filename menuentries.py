@@ -3,10 +3,14 @@
 ## Date:    2020.12.22
 ## Description:  holds Menu Entry data
 ## Notes:
+##    - Very few of these entries validate args
 from progmenu import EntryArg, MenuEntry
+from constants import GLOBE
 
 def addrFunc(addr):
-	'''Returns address'''
+	'''Sets & returns address'''
+	str(addr)
+	GLOBE["ADDR"]=addr
 	return addr
 
 def helpFunc():
@@ -19,12 +23,20 @@ def helpFunc():
 	exit(0)
 
 def portFunc(port):
-	'''Returns port if it can be converted to an int'''
+	'''Sets & Returns port if it can be converted to an int'''
 	try:
-		return int(port)
+		port=int(port)
+		GLOBE["PORT"]=port
+		return port
 	except:
 		return None
 
-addr=EntryArg("addr", ['a', "addr"], addrFunc)
-helper=MenuEntry("helper", ['h', "help"], helpFunc, 0)
-port=EntryArg("port", ['p', "port"], portFunc)
+def rootFunc(root):
+	'''Sets & returns root for HTML'''
+	GLOBE["ROOT"]=root
+	return root
+
+EntryArg("addr", ['a', "addr"], addrFunc)
+MenuEntry("helper", ['h', "help"], helpFunc, 0)
+EntryArg("port", ['p', "port"], portFunc)
+EntryArg("root", ['r', "root"], rootFunc)
