@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 ## Author:  Owen Cocjin
-## Version: 0.2
+## Version: 1.0
 ## Date:    2020.12.22
 ## Description:  Main script
 ## Notes:
