@@ -1,3 +1,6 @@
 [submodule ".ProgMenu"]
 	path = .ProgMenu
 	url = https://github.com/owenCocjin/ProgMenu.git
+[submodule ".Miscus"]
+	path = .Miscus
+	url = https://github.com/owenCocjin/Miscus.git
