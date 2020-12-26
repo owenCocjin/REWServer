@@ -1,6 +1,6 @@
 [submodule ".Miscus"]
 	path = .Miscus
-	url = git@github.com:owenCocjin/Miscus.git
+	url = https://github.com/owenCocjin/Miscus.git
 [submodule ".ProgMenu"]
 	path = .ProgMenu
 	url = https://github.com/owenCocjin/ProgMenu.git
