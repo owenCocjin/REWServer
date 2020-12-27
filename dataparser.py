@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 ## Author:  Owen Cocjin
-## Version: 0.1
-## Date:    2020.12.26
+## Version: 0.2
+## Date:    2020.12.27
 ## Description:  Parse incoming data from cts.bridge
 ## Notes:
 ##    - Parses POST data and writes it back to the same pipe
+## Update:
+##    - Added percent encoding for &
 import threading, time, random
 import miscus.io
 from progmenu import menu
@@ -38,7 +40,10 @@ class AJAXThread(threading.Thread):
 
 			#Find command_data and print it
 			if self.command in self.post_data:
-				print(f"<|X> Got command: {self.post_data[self.command]}", flush=True)
-				miscus.io.handlePipe(self.p_out, f"<p>{self.post_data[self.command]}: {random.randint(0, 10)}</p>")
+				cmd=self.post_data[self.command]
+				#Revert percent encoded data to original char
+				cmd=cmd.replace("%26", '&')
+				print(f"<|X> Got command: {cmd}", flush=True)
+				miscus.io.handlePipe(self.p_out, f"<p>{cmd}: {random.randint(0, 10)}</p>")
 			else:  #Return blank code
 				miscus.io.handlePipe(self.p_out, "nocmd")
