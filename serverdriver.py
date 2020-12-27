@@ -33,23 +33,23 @@ def socksetup(addr, port):
 def sockprocess(sock):
 	'''Manages socket processing, such as accepting connections, redirections, etc...'''
 	cli_buffer=''
+	cli_buffer_size=0
+	cli_cap=2048  #max number of bytes to read from client before dropping connection
 	print(f"\n{ctxt(f'[|X:{__name__}:sockprocess]:', 95)} Listening for connections...")
 	cli_conn, cli_addr=sock.accept()
 	print(f"<|X> {cli_addr[0]}:{cli_addr[1]} connected!")
 	#Get request from client
 	vprint(f"[|X:{__name__}:sockprocess]: Reading byte v", end='')
 	#^==Done, v==waiting
-	debugcounter=0
-	while True:
+	while cli_buffer_size<cli_cap:
 		vprint('\033[1D^', end='')
 		justgot=cli_conn.recv(1)
-		debugcounter+=1
-		if debugcounter%100==0:
-			vprint(f"[|X{__name__}:sockprocess:bytes]: cli_buffer: {cli_buffer}")
+		cli_buffer_size+=1
 		#vprint(f"sockprocess: Byte got: {justgot} ({justgot.hex()})")
 		if justgot.hex()=='0d':  #Read the next 3 bytes, stop if they are '\n\r\n'
 			#vprint("socprocess: Testing for EOM...")
 			getthree=cli_conn.recv(3)
+			cli_buffer_size+=3
 			cli_buffer+=getthree.decode()
 			if getthree.hex()=='0a0d0a':  #Completes the HTTP end of message; break if so
 				cli_buffer+='\n'  #For later parsing completion
@@ -58,6 +58,12 @@ def sockprocess(sock):
 		else:
 			cli_buffer+=justgot.decode()
 		vprint('\033[1Dv', end='')
+
+	#Check if cli_cap was broken
+	if cli_buffer_size>=cli_cap:
+		print(f"<|X> Request roke cap!")
+		cli_conn.send(b'HTTP/1.1 408 Request Timeout\r\n\r\n')
+		return 1  #Exit function
 
 	vprint(f"\n[|X:{__name__}:sockprocess]: Got HTTP Header!")
 	vprint(f"[|X:{__name__}:sockprocess]: HTTP Header:\n{cli_buffer}")
@@ -96,7 +102,7 @@ def htmlDirect(location, cli_conn, contentsize=0):
 			#Read data from pipe
 			pipedata=miscus.io.handlePipe(f"{GLOBE['ROOT']}/{GLOBE['PIPES'][1]}")
 			cli_conn.send(pipedata.encode("utf-8"))
-		else:
+		else:  #Assume everithing is ok
 			with open(f"{GLOBE['ROOT']}{location}", "br") as f:
 				vprint(f"{ctxt(f'[|X:{__name__}:sockprocess]: ', 92)}Sending OK reply!")
 				cli_conn.send(b'HTTP/1.1 200 OK\r\n\r\n')
