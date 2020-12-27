@@ -61,7 +61,7 @@ def sockprocess(sock):
 
 	#Check if cli_cap was broken
 	if cli_buffer_size>=cli_cap:
-		print(f"<|X> Request roke cap!")
+		print(f"\n<|X> Request broke cap!")
 		cli_conn.send(b'HTTP/1.1 408 Request Timeout\r\n\r\n')
 		return 1  #Exit function
 
