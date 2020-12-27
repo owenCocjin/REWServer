@@ -4,8 +4,8 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="/CSS/index.css">
-	<title>REWServer</title>
 	<script src="/JS/index.js"></script>
+	<title>REWServer</title>
 </head>
 <body>
 	<h1 id="title" class="no-space">REW Server</h1>
@@ -16,9 +16,9 @@
 				<span style="flex-grow:1;"></span>
 				<div id="tool_one" class="view_wrapper"></div>
 			</div>
-			<div class="inputting">
-				<input type="text" placeholder="Command:" style="flex-grow:3;padding-left:5px;"></input>
-				<button onclick="getExampleData('one')" style="flex-grow:0;">Enter</button>
+			<div class="command_inputting">
+				<input id="input_one" type="text" placeholder="Command:" style="flex-grow:3;padding-left:5px;"></input>
+				<button onclick="sendCommand('one')" style="flex-grow:0;">Enter</button>
 			</div>
 		</div>
 		<div class="column no-space">
@@ -27,9 +27,9 @@
 				<span style="flex-grow:1;"></span>
 				<div id="tool_two" class="view_wrapper"></div>
 			</div>
-			<div class="inputting">
-				<input type="text" placeholder="Command:" style="flex-grow:3;padding-left:5px;"></input>
-				<button onclick="getExampleData('two')" style="flex-grow:0;">Enter</button>
+			<div class="command_inputting">
+				<input id="input_two" type="text" placeholder="Command:" style="flex-grow:3;padding-left:5px;"></input>
+				<button onclick="sendCommand('two')" style="flex-grow:0;">Enter</button>
 			</div>
 		</div>
 	</div>
@@ -61,5 +61,17 @@
 	</div>
 </body>
 <footer>
+	<script>
+		var viewers=document.getElementsByClassName("command_inputting");
+		function clicker(){  //
+			if(event.keyCode===13){  //Event is a pre-defined browser variable
+				this.lastElementChild.click();
+				this.firstElementChild.value='';
+			}//if()
+		}//function()
+		for(i=0;i<viewers.length;++i){
+			viewers[i].firstElementChild.addEventListener("keyup", clicker.bind(viewers[i]), false);
+		}//for()
+	</script>
 </footer>
 </html>

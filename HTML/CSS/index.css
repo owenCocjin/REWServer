@@ -40,13 +40,13 @@ html *{
 	clear:both;
 }*/
 
-.inputting{
+.command_inputting{
 	position:relative;
 	display:flex;
 	flex-direction:row;
 	margin:inherit;
 }
-.inputting *{
+.command_inputting *{
 	background-color:inherit;
 	color:inherit;
 	border-color:#55ee33;
