@@ -37,9 +37,9 @@ def sockprocess(sock):
 	cli_conn, cli_addr=sock.accept()
 	print(f"<|X> {cli_addr[0]}:{cli_addr[1]} connected!")
 	#Get request from client
-	vprint(f"[|X:{__name__}:sockprocess]: Reading bytes", end='')
+	vprint(f"[|X:{__name__}:sockprocess]: Reading byte", end='')
 	while True:
-		vprint('.', end='')
+		vprint('\033[1D.', end='')
 		justgot=cli_conn.recv(1)
 		#vprint(f"sockprocess: Byte got: {justgot} ({justgot.hex()})")
 		if justgot.hex()=='0d':  #Read the next 3 bytes, stop if they are '\n\r\n'
@@ -52,8 +52,9 @@ def sockprocess(sock):
 			#vprint("sockprocess: Continuing...")
 		else:
 			cli_buffer+=justgot.decode()
+		vprint('\033[1D ', end='')
 
-	vprint(f"[|X:{__name__}:sockprocess]: Got HTTP Header!")
+	vprint(f"\n[|X:{__name__}:sockprocess]: Got HTTP Header!")
 	vprint(f"[|X:{__name__}:sockprocess]: HTTP Header:\n{cli_buffer}")
 	#Get just the first line
 	cli_header=cli_buffer.split('\n')
