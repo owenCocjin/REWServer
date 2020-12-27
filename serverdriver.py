@@ -37,7 +37,9 @@ def sockprocess(sock):
 	cli_conn, cli_addr=sock.accept()
 	print(f"<|X> {cli_addr[0]}:{cli_addr[1]} connected!")
 	#Get request from client
+	vprint(f"[|X:{__name__}:sockprocess]: Reading bytes", end='')
 	while True:
+		vprint('.', end='')
 		justgot=cli_conn.recv(1)
 		#vprint(f"sockprocess: Byte got: {justgot} ({justgot.hex()})")
 		if justgot.hex()=='0d':  #Read the next 3 bytes, stop if they are '\n\r\n'
