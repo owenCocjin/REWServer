@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 ## Author:  Owen Cocjin
-## Version: 1.1
-## Date:    2020.12.22
+## Version: 1.2
+## Date:    2020.12.27
 ## Description:  Manage the web server's socket connections
 ## Notes:
 ## Update:
-##    - Included miscus for pipe handling
-##    - Ensure appropriate messages are sent
-##    - Changde htmlDirect's functionality slightly
+##    - Added proper headers for POST returned data
 
 import socket
 import miscus.io
@@ -101,8 +99,12 @@ def htmlDirect(location, cli_conn, contentsize=0):
 			vprint(f"[|X:{__name__}:htmlDirect]: Wrote to pipe: {cli_body}")
 			#Read data from pipe
 			pipedata=miscus.io.handlePipe(f"{GLOBE['ROOT']}/{GLOBE['PIPES'][1]}")
+			#triple quotes auto adds newline
+			cli_conn.send(b"HTTP/1.1 200 OK\r\n\
+Content-Type: text/plain\r\n\
+X-Content-Type-Options: nosniff\r\n\r\n")
 			cli_conn.send(pipedata.encode("utf-8"))
-		else:  #Assume everithing is ok
+		else:  #Assume everything is ok
 			with open(f"{GLOBE['ROOT']}{location}", "br") as f:
 				vprint(f"{ctxt(f'[|X:{__name__}:sockprocess]: ', 92)}Sending OK reply!")
 				cli_conn.send(b'HTTP/1.1 200 OK\r\n\r\n')
