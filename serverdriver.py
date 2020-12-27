@@ -1,11 +1,17 @@
 #!/usr/bin/python3
 ## Author:  Owen Cocjin
-## Version: 1.0
+## Version: 1.1
 ## Date:    2020.12.22
 ## Description:  Manage the web server's socket connections
 ## Notes:
+## Update:
+##    - Included miscus for pipe handling
+##    - Ensure appropriate messages are sent
+##    - Changde htmlDirect's functionality slightly
 
 import socket
+import miscus.io
+from typing import List, Dict
 from constants import GLOBE
 from progmenu import menu
 from miscus.stringmisc import ctxt
@@ -29,7 +35,7 @@ def sockprocess(sock):
 	cli_buffer=''
 	vprint(f"[|X:{__name__}:sockprocess]: Listening for connections...")
 	cli_conn, cli_addr=sock.accept()
-	print(ctxt(f"<|X> {cli_addr[0]}:{cli_addr[1]} connected!", 30, 102))
+	print(f"{ctxt('<|X>', 30, 102)} {cli_addr[0]}:{cli_addr[1]} connected!")
 	#Get request from client
 	while True:
 		justgot=cli_conn.recv(1)
@@ -52,26 +58,62 @@ def sockprocess(sock):
 	cli_req=cli_header[0].split()
 	print(f"<|X> Request: {cli_req}")
 	#Send index.html
-	htmlDirect(cli_req[1], cli_conn)
+	if cli_req[0]=="GET":
+		htmlDirect(cli_req[1], cli_conn)
+	elif cli_req[0]=="POST":
+		splithead=splitHeader(cli_header)
+		htmlDirect(cli_req[1], cli_conn, splithead["Content-Length"])
 	#Close connection
-	vprint(ctxt(f"[|X:{__name__}:sockprocess]: Saying bye to {cli_addr}!", bg=43), end="\n\n")
+	vprint(f"{ctxt(f'[|X:{__name__}:sockprocess]:', 93)} Saying bye to {cli_addr}!", end="\n\n")
 	cli_conn.close()
 
-def htmlDirect(location, cli_sock):
-	'''Sends the file for the requested file to the given client socket; 404 page otherwise'''
+def htmlDirect(location, cli_conn, contentsize=0):
+	'''Sends the file for the requested file to the given client socket; 404 page otherwise.
+	Reads contentsize bytes from cli_conn if contentsize>0'''
 	if location=='/':  #Convert plain '/' to default html file
 		location="/index.html"
-	try:  #The fail will be with opening the file
-		with open(f"{GLOBE['ROOT']}{location}", "br") as f:
-			vprint(f"[|X:{__name__}:sockprocess]: Sending replies")
-			cli_sock.send(b'HTTP/1.1 200 OK\r\n\r\n')
-			cli_sock.send(f.read())
+	try:  #The fail will hopefully be with opening the file
+		contentsize=int(contentsize)
+		#if contentsize>0, assume POST request
+		if contentsize==0 and location==f"/{GLOBE['PIPES'][0]}":
+			#Send client error 411 "Length Required"
+			vprint(f"{ctxt(f'[|X:{__name__}:htmlDirect]:', 31)} Requested pipe with no data!")
+			cli_conn.send(b'HTTP/1.1 411 Length Required\r\n\r\n')
+		elif contentsize>0 and location==f"/{GLOBE['PIPES'][0]}":
+			vprint(f"[|X:{__name__}:htmlDirect]: Got POST request to pipe!")
+			cli_body=cli_conn.recv(contentsize).decode()
+			#Write the content data to pipe
+			miscus.io.handlePipe(f"{GLOBE['ROOT']}/{GLOBE['PIPES'][0]}", cli_body)
+			vprint(f"[|X:{__name__}:htmlDirect]: Wrote to pipe: {cli_body}")
+			#Read data from pipe
+			pipedata=miscus.io.handlePipe(f"{GLOBE['ROOT']}/{GLOBE['PIPES'][1]}")
+			cli_conn.send(pipedata.encode("utf-8"))
+		else:
+			with open(f"{GLOBE['ROOT']}{location}", "br") as f:
+				vprint(f"{ctxt(f'[|X:{__name__}:sockprocess]: ', 92)}Sending OK reply!")
+				cli_conn.send(b'HTTP/1.1 200 OK\r\n\r\n')
+				cli_conn.send(f.read())
+
 	except FileNotFoundError as e:
 		vprint(f"[|X:{__name__}:htmlDirect]: {ctxt('Bad page request!', 31)}")
 		#Send back the bad request message!
-		cli_sock.send(b'HTTP/1.1 404 Not Found\r\n\r\n')
+		cli_conn.send(b'HTTP/1.1 404 Not Found\r\n\r\n')
 		with open(f"{GLOBE['ROOT']}/pnf.html", "br") as f:
-			cli_sock.send(f.read())
+			cli_conn.send(f.read())
+
+#--------------------#
+#    HELPER FUNCS    #
+#--------------------#
+def splitHeader(header:List)->Dict:
+	'''Splits a header (already split by line) up and returns a dict.
+	Ex return: {"Content-length":30}'''
+	toRet={}
+	for line in header:
+		splitloc=line.find(':')
+		title=line[:splitloc].strip()
+		content=line[splitloc+1:].strip()
+		toRet[title]=content
+	return toRet
 
 if __name__=="__main__":
 	try:
