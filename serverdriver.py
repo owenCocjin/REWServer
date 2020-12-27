@@ -33,9 +33,9 @@ def socksetup(addr, port):
 def sockprocess(sock):
 	'''Manages socket processing, such as accepting connections, redirections, etc...'''
 	cli_buffer=''
-	vprint(f"[|X:{__name__}:sockprocess]: Listening for connections...")
+	print(f"\n{ctxt(f'[|X:{__name__}:sockprocess]:', 95)} Listening for connections...")
 	cli_conn, cli_addr=sock.accept()
-	print(f"{ctxt('<|X>', 30, 102)} {cli_addr[0]}:{cli_addr[1]} connected!")
+	print(f"<|X> {cli_addr[0]}:{cli_addr[1]} connected!")
 	#Get request from client
 	while True:
 		justgot=cli_conn.recv(1)
@@ -64,7 +64,7 @@ def sockprocess(sock):
 		splithead=splitHeader(cli_header)
 		htmlDirect(cli_req[1], cli_conn, splithead["Content-Length"])
 	#Close connection
-	vprint(f"{ctxt(f'[|X:{__name__}:sockprocess]:', 93)} Saying bye to {cli_addr}!", end="\n\n")
+	vprint(f"{ctxt(f'[|X:{__name__}:sockprocess]:', 93)} Saying bye to {cli_addr}!")
 	cli_conn.close()
 
 def htmlDirect(location, cli_conn, contentsize=0):
