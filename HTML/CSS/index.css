@@ -5,12 +5,16 @@ button{
 
 h2{
 	text-align:center;
-	font-size:3vw;
+	font-size:4vw;
 }
 
 html *{
 	background-color:black;
 	color:#55ee33;
+}
+
+input{
+	min-width:0;
 }
 
 #title {
